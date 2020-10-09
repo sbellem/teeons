@@ -5,6 +5,7 @@ pkgs: attrs:
     args = [ ./builder.sh ];
     setup = ./setup.sh;
     baseInputs = [
+      binutils
       binutils-unwrapped
       coreutils
       findutils

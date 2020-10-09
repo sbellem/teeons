@@ -1,2 +1,5 @@
 **/hello-2.10/
-**/result
+**/graphviz-stable*
+**/result*
+*.tar.gz
+*.png
