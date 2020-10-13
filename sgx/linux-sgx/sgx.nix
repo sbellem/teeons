@@ -1,5 +1,11 @@
 with import <nixpkgs> {};
 
+let
+  binutils = import ./binutils.nix {
+    inherit bison fetchurl flex gettext libbfd libiberty libopcodes stdenv texinfo zlib;
+  };
+in
+
 stdenv.mkDerivation {
   name = "sgx";
   src = fetchFromGitHub {
@@ -13,5 +19,10 @@ stdenv.mkDerivation {
     sha256 = "009hlkgnn3wvbsnawpfcwdxyncax9mb260vmh9anb91lmqbj74rp";
     fetchSubmodules = true;
   };
+  #buildInputs = [(import ./binutils.nix {
+  #  inherit bison fetchurl flex gettext libbfd libiberty libopcodes stdenv texinfo zlib;
+  #}) cmake];
+  inherit binutils;
+  buildInputs = [binutils cmake];
   builder = ./builder.sh;
 }
