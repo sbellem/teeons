@@ -1,3 +1,6 @@
 source $stdenv/setup
 
-echo $binutils.outPath
+echo ${xbinutils}.outPath
+export BINUTILS_DIR=${xbinutils}/bin
+cd $src
+make sdk
