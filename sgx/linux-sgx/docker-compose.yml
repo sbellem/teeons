@@ -2,11 +2,9 @@ version: '3.7'
 
 services:
   sgxnix:
-    image: sgx-nix
+    image: sgx.lab.nix
     build:
       context: .
     volumes:
-      - ./binutils.nix:/home/user/binutils.nix
-      - ./default.nix:/home/user/default.nix
-      - ./sgx.nix:/home/user/sgx.nix
-      - ./source:/home/user/sgx-src
+      - ./binutils.nix:/usr/src/binutils.nix
+      - ./shell.nix:/usr/src/shell.nix

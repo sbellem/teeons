@@ -1,26 +1,19 @@
-FROM ubuntu:18.04
+FROM nixpkgs/nix:nixos-20.03
 
-RUN apt-get update \
-        && apt-get install -y curl wget python perl git vim \
-        && mkdir -p /nix /etc/nix \
-        && chmod a+rwx /nix \
-        && echo 'sandbox = false' > /etc/nix/nix.conf \
-        && rm -rf /var/lib/apt/lists/*
+RUN set -ex \
+        \
+        && mkdir /etc/nix \
+        && echo "sandbox = false" >> /etc/nix/nix.conf \
+        && nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs \
+        && nix-channel --update
 
-#add a user for Nix
-RUN adduser user --home /home/user --disabled-password --gecos "" --shell /bin/bash
-CMD /bin/bash -l
-USER user
-ENV USER user
-WORKDIR /home/user
+RUN set -ex \
+        && nix-env -i /nix/store/681354n3k44r8z90m35hm8945vsp95h1-glibc-2.27 \
+        && nix-env -i /nix/store/1kl6ms8x56iyhylb2r83lq7j3jbnix7w-binutils-2.31.1 \
+        && nix-env --set-flag priority 10 binutils-2.31.1 \
+        && nix-env -i /nix/store/lvwq3g3093injr86lm0kp0f61k5cbpay-gcc-wrapper-8.3.0
 
-#install the required software
-RUN touch .bash_profile \
-&& curl https://nixos.org/releases/nix/nix-2.3.7/install | sh \
-&& . /home/user/.nix-profile/etc/profile.d/nix.sh
+COPY shell.nix /usr/src/shell.nix
 
-RUN git clone --recursive https://github.com/intel/linux-sgx.git /home/user/linux-sgx-z
-
-COPY . /home/user/
-#config nix-shell
-#RUN . /home/user/.nix-profile/etc/profile.d/nix.sh && nix-shell
+WORKDIR /usr/src
+RUN nix-shell

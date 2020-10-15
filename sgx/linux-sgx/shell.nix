@@ -13,27 +13,27 @@ let
   };
 
 in
-
 stdenvNoCC.mkDerivation {
   inherit ipp_crypto asldobjdump;
   name = "sgx";
   src = fetchFromGitHub {
-    owner = "intel";
+    owner = "sbellem";
     repo = "linux-sgx";
-    rev = "33f4499173497bdfdf72c5f61374c0fadc5c5365";
+    rev = "4f3ec1dd89e06efbc6ebd2a8ef85eb1a7ded3130";
     # Command to get the sha256 hash (note the --fetch-submodules arg):
-    # nix run -f '<nixpkgs>' nix-prefetch-github -c nix-prefetch-github --fetch-submodules --rev 33f4499173497bdfdf72c5f61374c0fadc5c5365 intel linux-sgx
-    sha256 = "009hlkgnn3wvbsnawpfcwdxyncax9mb260vmh9anb91lmqbj74rp";
+    # nix run -f '<nixpkgs>' nix-prefetch-github -c nix-prefetch-github --fetch-submodules --rev 4f3ec1dd89e06efbc6ebd2a8ef85eb1a7ded3130 sbellem linux-sgx
+    sha256 = "08f3divshmc644xdbzlm2v4wvmkj6sik07pi60d1cr1zga888khf";
     fetchSubmodules = true;
   };
   postUnpack = ''
     tar -C $sourceRoot -xvf $ipp_crypto
     tar -C $sourceRoot -xvf $asldobjdump
+    export BINUTILS_DIR=$PWD/$sourceRoot/external/toolset/nix
     '';
+  dontConfigure = true;
   buildInputs = [
     autoconf
     automake
-    #binutils-unwrapped
     libtool
     ocaml
     ocamlPackages.ocamlbuild
@@ -42,19 +42,31 @@ stdenvNoCC.mkDerivation {
     gnum4
     openssl
     gnumake
+    #glibc
     /nix/store/681354n3k44r8z90m35hm8945vsp95h1-glibc-2.27
+    #binutils-unwrapped
     /nix/store/1kl6ms8x56iyhylb2r83lq7j3jbnix7w-binutils-2.31.1
+    #gcc8
     /nix/store/lvwq3g3093injr86lm0kp0f61k5cbpay-gcc-wrapper-8.3.0
     texinfo
     bison
     flex
-];
-  dontConfigure = true;
+    perl
+    python3
+    which
+  ];
   #buildPhase = ''
-  #  export BINUTILS_DIR=${xbinutils}/bin
+  #  export BINUTILS_DIR=$sourceRoot/external/toolset/nix
   #  echo $BINUTILS_DIR
   #  '';
-  buildFlags = ["sdk"];
+  buildFlags = ["sdk_install_pkg"];
   dontInstall = true;
+  postBuild = ''
+    echo -e 'no\n'$out | ./linux/installer/bin/sgx_linux_x64_sdk_2.11.100.2.bin
+    '';
+
   dontFixup = true;
+  shellHook = ''
+  echo "SGX build enviroment"
+  '';
 }
