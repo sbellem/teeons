@@ -20,13 +20,14 @@ in
     buildInputs = [ bison flex gettext libbfd libiberty libopcodes texinfo zlib ];
     configureFlags = [
       #"--prefix=/usr/local"
-      #"--enable-shared"
+      "--enable-shared"
       #"--disable-static"
-      #"--enable-64-bit-bfd"
-      #"--with-system-zlib"
-      #"--disable-werror"
+      "--enable-64-bit-bfd"
+      "--with-system-zlib"
+      "--disable-werror"
       "--enable-gold"
-      #"--enable-plugins"
+      "--enable-plugins"
+      "--enable-ld=default"
     ];
     #builder = ./builder.sh;
     #dontInstall = true;
