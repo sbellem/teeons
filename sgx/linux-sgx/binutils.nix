@@ -29,9 +29,6 @@ in
       "--enable-plugins"
       "--enable-ld=default"
     ];
-    #builder = ./builder.sh;
-    #dontInstall = true;
-    #dontFixup = true;
   }
 
 

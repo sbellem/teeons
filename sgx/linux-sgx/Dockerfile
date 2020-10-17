@@ -1,4 +1,5 @@
-FROM nixpkgs/nix:nixos-20.03
+#FROM nixpkgs/nix:nixos-20.03
+FROM nixpkgs/nix@sha256:818dd239afef99a7ba0705af3de46fa093a0ef504391c2a1308283733b709b04
 
 RUN set -ex \
         \
@@ -7,13 +8,10 @@ RUN set -ex \
         && nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs \
         && nix-channel --update
 
-RUN set -ex \
-        && nix-env -i /nix/store/681354n3k44r8z90m35hm8945vsp95h1-glibc-2.27 \
-        && nix-env -i /nix/store/1kl6ms8x56iyhylb2r83lq7j3jbnix7w-binutils-2.31.1 \
-        && nix-env --set-flag priority 10 binutils-2.31.1 \
-        && nix-env -i /nix/store/lvwq3g3093injr86lm0kp0f61k5cbpay-gcc-wrapper-8.3.0
+RUN nix-env -i /nix/store/681354n3k44r8z90m35hm8945vsp95h1-glibc-2.27
 
-COPY shell.nix /usr/src/shell.nix
+#COPY "asldobjdump.nix" "shell.nix" /usr/src/
+COPY shell.nix /usr/src/
 
 WORKDIR /usr/src
-RUN nix-shell
+#RUN nix-build shell.nix
